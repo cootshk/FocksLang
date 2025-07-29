@@ -1,0 +1,2 @@
+---@diagnostic disable: duplicate-doc-alias
+---@alias str string|focksString

@@ -17,8 +17,23 @@ local string = {
     call = function(self, index)
         return self.value:sub(index, index)
     end,
+    ---@protected
+    type = "focksString",
 }
-setmetatable(string, {__call=function(self, value) return self:new(value) end})
+setmetatable(string, {
+    __call=function(self, value) return self:new(value) end,
+    __tostring=function(self) return self.value end,
+    __concat = function(self, other) return tostring(self) .. tostring(other) end,
+})
 return {
-    string = string
+    string = string,
+    --- Gets the character at the index of a string
+    ---@param value str
+    ---@return string
+    get = function(value, index)
+        if type(value) == "string" then
+            return value:sub(index, index)
+        end
+        return value.value.sub(index, index)
+    end
 }

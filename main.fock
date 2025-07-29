@@ -1,5 +1,5 @@
 print "asdf"
-print "asdfghjk2"
+print "asdfghjk2" 3
 # this is a comment
 
-print "asdf3"
+print "asdf3" 2
