@@ -1,6 +1,8 @@
 local lineNum = 0
 ---@type table, string, function
 _G.MEMORY = require "builtins"
+local builtins = require "builtins"
+local helpers = require "helpers"
 
 ---Gets the name of the first function
 ---@param line string
@@ -18,7 +20,17 @@ end
 ---@param argument string
 ---@return any?
 local function call_function(func, argument)
-    print("Calling ".. func .. " with " .. argument)
+    ---@type any
+    local arg = argument
+    if argument:sub(1,1) == "\"" then
+        local end_quote = argument:find("\"", 2, true)
+        if not end_quote then
+            error("Unmatched quote!")
+        end
+        ---@type focksString
+        arg = helpers.string(argument:sub(2, end_quote-1))
+    end
+    MEMORY[func](arg)
 
 end
 ---@param line string
