@@ -20,7 +20,6 @@ setmetatable(MEMORY, {
 		end
 	end,
 })
-local builtins = require("builtins")
 
 ---Gets the name of the first function
 ---@param line string

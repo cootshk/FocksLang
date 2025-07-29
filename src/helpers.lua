@@ -42,4 +42,13 @@ return {
 		end
 		return value.value.sub(index, index)
 	end,
+	type = function(object)
+		if type(object) == "string" then
+			return "string"
+		elseif type(object) == "table" and object.type then
+			return object.type
+		else
+			return "unknown"
+		end
+	end,
 }
