@@ -30,7 +30,7 @@ local string = {
 				else
 					error("Invalid type for string call: " .. type)
 				end
-			end
+			end,
 		}
 		setmetatable(metatable, getmetatable(self))
 		setmetatable(ret, metatable)
@@ -75,7 +75,7 @@ setmetatable(boolean, {
 	__call = function(self, value)
 		return self:new(value)
 	end,
-	__tostring = function (self)
+	__tostring = function(self)
 		return tostring(self.value)
 	end,
 	__eq = function(self, other)
