@@ -28,6 +28,7 @@ print("file start")
 for line in code:gmatch "[^\n]+" do
     -- comment markings
 	if line ~= "" and line:sub(1,1) ~= "#" then
+        -- strip the line here
         parse(line)
     end
 end

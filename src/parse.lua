@@ -8,6 +8,11 @@ _G.MEMORY = require "builtins"
 local function get_function_name(line)
     return line:gmatch("[^ ]+")()
 end
+---@param line string
+---@return string
+local function get_function_args(line)
+    return line:sub(#get_function_name(line)+2)
+end
 ---Calls the function, recursively calling input argument functions right to left
 ---@param func string
 ---@param argument string
@@ -20,5 +25,5 @@ end
 return function (line)
     lineNum = lineNum + 1
     print("Line " .. lineNum .. " (" .. line .. ").")
-    call_function(get_function_name(line), line:sub(#line-#get_function_name(line)-1))
+    call_function(get_function_name(line), get_function_args(line))
 end
