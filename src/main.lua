@@ -20,5 +20,9 @@ if not file then
 end
 
 ---@type string
-local code = file:read()
+local code = "\n" .. file:read() .. "\n"
 file:close()
+
+for line in code:gmatch("[^\n]+") do
+    print(line)
+end
