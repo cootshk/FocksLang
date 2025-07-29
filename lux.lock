@@ -2,6 +2,46 @@
   "version": "1.0.0",
   "dependencies": {
     "rocks": {
+      "3a2a891f3138ae19a28b6ceb2e65b7d0c8e8d46674296468a1556bc60676905a": {
+        "name": "penlight",
+        "version": "1.14.0-3",
+        "pinned": false,
+        "opt": false,
+        "dependencies": [
+          "832fd9862ce671c0c9777855d4c8b19f9ad9c2679fb5466c3a183785a51b76b0"
+        ],
+        "constraint": "==1.14.0",
+        "binaries": [],
+        "source": "luarocks_rockspec+https://luarocks.org/",
+        "source_url": {
+          "type": "git",
+          "url": "https://github.com/lunarmodules/penlight.git",
+          "ref": "1.14.0"
+        },
+        "hashes": {
+          "rockspec": "sha256-8ckXDAqsbgL9zOIH3b4HOxasdAXGzBnr+bR6nkAHrOE=",
+          "source": "sha256-4zAt0GgQEkg9toaUaDn3ST3RvjLUDsuOzrKi9lhq0fQ="
+        }
+      },
+      "832fd9862ce671c0c9777855d4c8b19f9ad9c2679fb5466c3a183785a51b76b0": {
+        "name": "luafilesystem",
+        "version": "1.8.0-1",
+        "pinned": false,
+        "opt": false,
+        "dependencies": [],
+        "constraint": null,
+        "binaries": [],
+        "source": "luarocks_rockspec+https://luarocks.org/",
+        "source_url": {
+          "type": "git",
+          "url": "https://github.com/keplerproject/luafilesystem",
+          "ref": "v1_8_0"
+        },
+        "hashes": {
+          "rockspec": "sha256-ylWfvz35v68L9Sa92bQHDfFylaS7PEmZr62cBfRU06I=",
+          "source": "sha256-pEA+Z1pkykWLTT6NHQ5lo8roOh2P0fiHtnK+byTkF5o="
+        }
+      },
       "d528cd52981564259b873ae3f972f48a19522d775240465725a6434109336b92": {
         "name": "argparse",
         "version": "0.7.1-1",
@@ -22,7 +62,8 @@
       }
     },
     "entrypoints": [
-      "d528cd52981564259b873ae3f972f48a19522d775240465725a6434109336b92"
+      "d528cd52981564259b873ae3f972f48a19522d775240465725a6434109336b92",
+      "3a2a891f3138ae19a28b6ceb2e65b7d0c8e8d46674296468a1556bc60676905a"
     ]
   }
 }
