@@ -1,7 +1,3 @@
-print "asdf"
-print "asdfghjk2" 3
-# this is a comment
-
-print "asdf3" \
-# should be the same as print "asdf3" 2
-    2
+print \
+# this is a comment part 2
+        "hello world!"

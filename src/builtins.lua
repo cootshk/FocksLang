@@ -12,4 +12,7 @@ return {
 			return arg2 -- also daisy chained
 		end
 	end,
+	["true"] = true,
+	["false"] = false,
+	null = nil,
 }
