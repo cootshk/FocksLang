@@ -42,6 +42,27 @@
           "source": "sha256-pEA+Z1pkykWLTT6NHQ5lo8roOh2P0fiHtnK+byTkF5o="
         }
       },
+      "b5391c77572d8186079e80fb4d8582cf0fea6dcc64b08af3cc651d3eed8e8b35": {
+        "name": "luastatic",
+        "version": "0.0.12-1",
+        "pinned": false,
+        "opt": false,
+        "dependencies": [],
+        "constraint": "==0.0.12",
+        "binaries": [
+          "luastatic"
+        ],
+        "source": "luarocks_rockspec+https://luarocks.org/",
+        "source_url": {
+          "type": "git",
+          "url": "https://github.com/ers35/luastatic.git",
+          "ref": "0.0.12"
+        },
+        "hashes": {
+          "rockspec": "sha256-jNxq4gyO+7kN7+Vpvq1iGFrIQ15x+HAkcqa3VqIhUVU=",
+          "source": "sha256-MluOLOGedZHPEXqqiTFeG6Uhv1DL/mKr1HUjzNqTOzs="
+        }
+      },
       "d528cd52981564259b873ae3f972f48a19522d775240465725a6434109336b92": {
         "name": "argparse",
         "version": "0.7.1-1",
@@ -63,7 +84,8 @@
     },
     "entrypoints": [
       "d528cd52981564259b873ae3f972f48a19522d775240465725a6434109336b92",
-      "3a2a891f3138ae19a28b6ceb2e65b7d0c8e8d46674296468a1556bc60676905a"
+      "3a2a891f3138ae19a28b6ceb2e65b7d0c8e8d46674296468a1556bc60676905a",
+      "b5391c77572d8186079e80fb4d8582cf0fea6dcc64b08af3cc651d3eed8e8b35"
     ]
   }
 }
