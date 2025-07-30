@@ -1,17 +1,6 @@
 local copy = require("copy")
 local builtins = require("builtins")
 -- Helpers here are not visible to end users
----@param object any
----@return string
-local function type(object)
-	if _G.type(object) == "string" then
-		return "string"
-	elseif _G.type(object) == "table" and object.type then
-		return object.type
-	else
-		return "unknown"
-	end
-end
 -- All of these *really* should be moved to a new file
 local string = {
 	---Makes a new string
@@ -212,5 +201,4 @@ _G.string.get = get
 return {
 	string = string,
 	get = get,
-	type = type,
 }

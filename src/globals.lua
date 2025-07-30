@@ -45,3 +45,14 @@ _G.tonumber = function(e, base)
 	end
 	return tonumber_old(e, base)
 end
+
+local type_old = _G.type
+---@param object any
+---@return string
+function type(object)
+	if type_old(object) == "table" and object.type then
+		return object.type
+	else
+		return type_old(object)
+	end
+end
