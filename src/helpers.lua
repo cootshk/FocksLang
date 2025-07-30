@@ -95,14 +95,22 @@ local int = {
 	---@param value integer
 	---@return focksInt
 	new = function(self, value)
+		assert(value ~= nil, "You must pass a value to an integer!")
 		---@class focksInt
 		local ret = copy(self)
 		ret.value = value
+		local metatable = {
+			__call = function(...)
+				error("You cannot call an integer!", 2)
+			end,
+		}
+		setmetatable(metatable, getmetatable(ret))
+		setmetatable(ret, metatable)
 		return ret
 	end,
 	---@protected
 	---@type integer
-	value = 0,
+	value = nil,
 	type = "focksInt",
 }
 setmetatable(int, {
@@ -121,7 +129,7 @@ setmetatable(int, {
 	end,
 	-- lua(tm)
 	-- the number "class" doesn't contain a metatable, so I can't just write a __index implementation
-	__add = function (self, other)
+	__add = function(self, other)
 		return tonumber(self) + tonumber(other)
 	end,
 	__sub = function(self, other)
@@ -133,15 +141,16 @@ setmetatable(int, {
 	__div = function(self, other)
 		return tonumber(self) / tonumber(other)
 	end,
-	__mod = function (self, other)
+	__mod = function(self, other)
 		return tonumber(self) % tonumber(other)
 	end,
 	__pow = function(self, other)
 		return tonumber(self) ^ tonumber(other)
 	end,
-	__unm = function (self)
+	__unm = function(self)
 		return -tonumber(self)
 	end,
+	--[[ Not implemented in LuaJIT
 	__idiv = function(self, other)
 		return tonumber(self) // tonumber(other)
 	end,
@@ -163,9 +172,30 @@ setmetatable(int, {
 	__shr = function (self, other)
 		return tonumber(self) >> tonumber(other)
 	end,
-	__concat = function (self, other)
-		return other .. tonumber(self) -- other might be not an intlike
-	end
+	]]
+	__concat = function(self, other)
+		return tostring(self) .. tostring(other) -- other might be not an intlike
+	end,
+	---@param self num
+	---@param other num
+	---@return boolean
+	__eq = function(self, other)
+		if type(self):sub(1, 5) == "focks" then
+			---@type integer
+			self = self.value
+		end
+		if type(other):sub(1, 5) == "focks" then
+			---@type integer
+			other = other.value
+		end
+		return self == other
+	end,
+	__lt = function(self, other)
+		return tonumber(self) < tonumber(other)
+	end,
+	__le = function(self, other)
+		return tonumber(self) <= tonumber(other)
+	end,
 })
 --- Gets the character at the index of a string
 ---@param value str
@@ -178,6 +208,7 @@ local get = function(value, index)
 	return value.value.sub(index, index)
 end
 _G.string.get = get
+
 return {
 	string = string,
 	get = get,
