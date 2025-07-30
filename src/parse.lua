@@ -56,7 +56,9 @@ local function call_function(func, argument)
 			arg = helpers.string(argument:sub(2, end_quote - 1))
 		end
 	elseif tonumber(argument) then
-		arg = tonumber(argument)
+		arg = helpers.int(tonumber(argument))
+	elseif table.contains({'true', 'false'}, argument) then
+		arg = helpers.boolean(argument == 'true')
 	end
 	log("Running function: " .. func .. " with argument: " .. tostring(arg))
 	MEMORY[func](arg)

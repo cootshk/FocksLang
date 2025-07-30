@@ -200,5 +200,7 @@ _G.string.get = get
 
 return {
 	string = string,
+	int = int,
+	boolean = boolean,
 	get = get,
 }

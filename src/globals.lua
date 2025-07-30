@@ -56,3 +56,16 @@ function type(object)
 		return type_old(object)
 	end
 end
+
+---Checks if the value is inside the table
+---@param list table
+---@param value any
+---@return boolean
+function table.contains(list, value)
+	for _, v in pairs(list) do
+		if v == value then
+			return true
+		end
+	end
+	return false
+end
