@@ -12,6 +12,20 @@ local function type(object)
 		return "unknown"
 	end
 end
+local tonumber_old = _G.tonumber
+---@param e num
+---@param base int
+---@return number
+_G.tonumber = function(e, base)
+	if type(base):sub(1, 5) == "focks" then
+		base = base.value
+	end
+	if type(e):sub(1, 5) == "focks" then
+		return tonumber_old(e.value, base)
+	end
+	return tonumber_old(e, base)
+end
+-- All of these *really* should be moved to a new file
 local string = {
 	---Makes a new string
 	---@param self focksString
@@ -61,6 +75,7 @@ local boolean = {
 	---Makes a new boolean
 	---@param self focksBoolean
 	---@param value boolean
+	---@return focksBoolean
 	new = function(self, value)
 		---@class focksBoolean
 		local ret = copy(self)
@@ -88,16 +103,74 @@ setmetatable(boolean, {
 		end
 	end,
 })
+local int = {
+	---@param self focksInt
+	---@param value integer
+	---@return focksInt
+	new = function(self, value)
+		---@class focksInt
+		local ret = copy(self)
+		ret.value = value
+		return ret
+	end,
+	---@protected
+	---@type integer
+	value = 0,
+	type = "focksInt",
+}
+setmetatable(int, {
+	---@param value integer
+	---@return focksInt
+	__call = function(self, value)
+		return self:new(value)
+	end,
+	---@param self focksInt
+	---@return string
+	__tostring = function(self)
+		return tostring(self.value)
+	end,
+	__tonumber = function(self)
+		return tonumber(tostring(self))
+	end,
+	-- lua(tm)
+	__add = function (self, other)
+		return tonumber(self) + tonumber(other)
+	end,
+	__sub = function(self, other)
+		return tonumber(self) - tonumber(other)
+	end,
+	__mul = function(self, other)
+		return tonumber(self) * tonumber(other)
+	end,
+	__div = function(self, other)
+		return tonumber(self) / tonumber(other)
+	end,
+	__mod = function (self, other)
+		return tonumber(self) % tonumber(other)
+	end,
+	__pow = function(self, other)
+		return tonumber(self) ^ tonumber(other)
+	end,
+	__idiv = function(self, other)
+		return tonumber(self) // tonumber(other)
+	end,
+	__band = function(self, other)
+		return tonumber(self) & tonumber(other)
+	end,
+})
+--- Gets the character at the index of a string
+---@param value str
+---@param index integer
+---@return string
+local get = function(value, index)
+	if type(value) == "string" then
+		return value:sub(index, index)
+	end
+	return value.value.sub(index, index)
+end
+_G.string.get = get
 return {
 	string = string,
-	--- Gets the character at the index of a string
-	---@param value str
-	---@return string
-	get = function(value, index)
-		if type(value) == "string" then
-			return value:sub(index, index)
-		end
-		return value.value.sub(index, index)
-	end,
+	get = get,
 	type = type,
 }

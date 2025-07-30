@@ -55,6 +55,8 @@ local function call_function(func, argument)
 		else
 			arg = helpers.string(argument:sub(2, end_quote - 1))
 		end
+	elseif tonumber(argument) then
+		arg = tonumber(argument)
 	end
 	log("Running function: " .. func .. " with argument: " .. tostring(arg))
 	MEMORY[func](arg)

@@ -33,17 +33,17 @@ log("file start")
 local workingLine = ""
 ---@param line string
 for line in file:lines() do
-	while helpers.get(line, 1) == " " do
+	while line:get(1) == " " do
 		-- strip leading spaces
 		---@type string
 		line = line:sub(2)
 	end
-	if helpers.get(line, -1) == "\\" then
+	if line:get(-1) == "\\" then
 		-- if the line ends with a backslash, continue to the next line
 		workingLine = workingLine .. line:sub(1, -2)
 		log("incomplete line, continuing: " .. workingLine)
 	-- comment markings
-	elseif line ~= "" and helpers.get(line, 1) ~= "#" then
+	elseif line ~= "" and line:get(1) ~= "#" then
 		workingLine = workingLine .. line
 		-- strip the line here
 		parse(workingLine)

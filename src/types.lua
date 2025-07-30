@@ -1,2 +1,4 @@
 ---@diagnostic disable: duplicate-doc-alias
 ---@alias str string|focksString
+---@alias int integer|focksInt
+---@alias num number|focksInt
