@@ -12,19 +12,6 @@ local function type(object)
 		return "unknown"
 	end
 end
-local tonumber_old = _G.tonumber
----@param e num
----@param base int
----@return number
-_G.tonumber = function(e, base)
-	if type(base):sub(1, 5) == "focks" then
-		base = base.value
-	end
-	if type(e):sub(1, 5) == "focks" then
-		return tonumber_old(e.value, base)
-	end
-	return tonumber_old(e, base)
-end
 -- All of these *really* should be moved to a new file
 local string = {
 	---Makes a new string
@@ -133,6 +120,7 @@ setmetatable(int, {
 		return tonumber(tostring(self))
 	end,
 	-- lua(tm)
+	-- the number "class" doesn't contain a metatable, so I can't just write a __index implementation
 	__add = function (self, other)
 		return tonumber(self) + tonumber(other)
 	end,
@@ -151,12 +139,33 @@ setmetatable(int, {
 	__pow = function(self, other)
 		return tonumber(self) ^ tonumber(other)
 	end,
+	__unm = function (self)
+		return -tonumber(self)
+	end,
 	__idiv = function(self, other)
 		return tonumber(self) // tonumber(other)
 	end,
 	__band = function(self, other)
 		return tonumber(self) & tonumber(other)
 	end,
+	__bor = function (self, other)
+		return tonumber(self) | tonumber(other)
+	end,
+	__bxor = function (self, other)
+		return tonumber(self) ~ tonumber(other)
+	end,
+	__bnot =function (self)
+		return ~tonumber(self)
+	end,
+	__shl = function (self, other)
+		return tonumber(self) << tonumber(other)
+	end,
+	__shr = function (self, other)
+		return tonumber(self) >> tonumber(other)
+	end,
+	__concat = function (self, other)
+		return other .. tonumber(self) -- other might be not an intlike
+	end
 })
 --- Gets the character at the index of a string
 ---@param value str

@@ -31,3 +31,17 @@ _G.log = function(...)
 	end
 	print(table.concat(args, " "))
 end
+
+local tonumber_old = _G.tonumber
+---@param e num
+---@param base int
+---@return number
+_G.tonumber = function(e, base)
+	if type(base):sub(1, 5) == "focks" then
+		base = base.value
+	end
+	if type(e):sub(1, 5) == "focks" then
+		return tonumber_old(e.value, base)
+	end
+	return tonumber_old(e, base)
+end
