@@ -1,5 +1,4 @@
 local copy = require("copy")
-local builtins = require("builtins")
 -- Helpers here are not visible to end users
 -- All of these *really* should be moved to a new file
 local string = {
@@ -30,16 +29,20 @@ local string = {
 	---@type string
 	value = "",
 	---@protected
+	---@param self focksString
+	---@param index int
 	call = function(self, index)
+		if type(index) == "focksInt" then
+			index = index.value
+		end
 		return self.value:sub(index, index)
 	end,
 	---@protected
+	---@type focksObjectTypes
 	type = "focksString",
 }
 setmetatable(string, {
-	__call = function(self, value)
-		return self:new(value)
-	end,
+	__call = string.new,
 	__tostring = function(self)
 		return self.value
 	end,
@@ -60,12 +63,12 @@ local boolean = {
 	end,
 	---@protected
 	value = false,
+	---@protected
+	---@type focksObjectTypes
 	type = "focksBoolean",
 }
 setmetatable(boolean, {
-	__call = function(self, value)
-		return self:new(value)
-	end,
+	__call = boolean.new,
 	__tostring = function(self)
 		return tostring(self.value)
 	end,
@@ -99,7 +102,8 @@ local int = {
 	end,
 	---@protected
 	---@type integer
-	value = nil,
+	value = 0,
+	---@type focksObjectTypes
 	type = "focksInt",
 }
 setmetatable(int, {
@@ -186,6 +190,35 @@ setmetatable(int, {
 		return tonumber(self) <= tonumber(other)
 	end,
 })
+
+local func = {
+	---@param self focksFunction
+	---@param value function
+	---@return focksFunction
+	new = function(self, value)
+		---@class focksFunction
+		local ret = copy(self)
+		ret.value = value
+		local metatable = {
+			__call = function(self, ...)
+				return self.value(...)
+			end
+		}
+		setmetatable(metatable, getmetatable(ret))
+		setmetatable(ret, metatable)
+		return ret
+	end,
+	---@protected
+	value = function(...)
+		error("Not initialized!\nThis is a bug with Focks, you should never be seeing this!", 2)
+	end,
+	---@protected
+	type = "focksFunction",
+}
+setmetatable(func, {
+	__call = func.new
+})
+
 --- Gets the character at the index of a string
 ---@param value str
 ---@param index integer
@@ -202,5 +235,6 @@ return {
 	string = string,
 	int = int,
 	boolean = boolean,
+	func = func,
 	get = get,
 }

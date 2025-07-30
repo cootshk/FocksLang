@@ -47,8 +47,9 @@ _G.tonumber = function(e, base)
 end
 
 local type_old = _G.type
+---Returns the type of an object. Focks objects have a type starting with "focks"
 ---@param object any
----@return string
+---@return luaObjectTypes|focksObjectTypes
 function type(object)
 	if type_old(object) == "table" and object.type then
 		return object.type
@@ -69,3 +70,8 @@ function table.contains(list, value)
 	end
 	return false
 end
+
+return {
+	tonumber = tonumber_old,
+	type = type_old,
+}

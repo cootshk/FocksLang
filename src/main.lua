@@ -11,8 +11,10 @@ parser:option("-d --debug", "Enable debug logging."):args(0)
 
 local args = parser:parse()
 
+_G.VERSION = "Focks v0.1.0"
+
 if args.version then
-	print("Focks version 1.0.0")
+	print(VERSION)
 	os.exit(0)
 end
 if args.debug then

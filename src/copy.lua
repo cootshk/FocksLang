@@ -1,3 +1,5 @@
+local type = require("globals").type
+
 -- Hard Copy
 ---@type any[t]
 ---@return any[t]

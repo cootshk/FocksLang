@@ -2,3 +2,6 @@
 ---@alias str string|focksString
 ---@alias int integer|focksInt
 ---@alias num number|int
+---@alias focksObject focksBoolean|focksString|focksInt|focksFunction -- |{value: any, type:string}
+---@alias focksObjectTypes "focksBoolean"|"focksString"|"focksInt"|"focksFunction"
+---@alias luaObjectTypes "nil"|"number"|"string"|"boolean"|"table"|"function"|"thread"|"userdata"

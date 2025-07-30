@@ -21,23 +21,11 @@ setmetatable(MEMORY, {
 	end,
 })
 
----Gets the name of the first function
----@param line string
----@return string
-local function get_function_name(line)
-	return line:gmatch("[^ ]+")()
-end
----@param line string
----@return string
-local function get_function_args(line)
-	return line:sub(#get_function_name(line) + 2)
-end
----Calls the function, recursively calling input argument functions right to left
----@param func str
+-- A line contains multiple blocks, which can be variables, function definitions, or literals (true, "asdf", 1, etc)
+---Gets the fock object corresponding to the parsed word
 ---@param argument string
----@return any?
-local function call_function(func, argument)
-	-- TODO: function variables
+---@return focksObject
+local function parse_block(argument)
 	---@type any
 	local arg = argument
 	if argument:sub(1, 1) == '"' then
@@ -59,13 +47,20 @@ local function call_function(func, argument)
 		arg = helpers.int(tonumber(argument))
 	elseif table.contains({'true', 'false'}, argument) then
 		arg = helpers.boolean(argument == 'true')
+	else
+		---@type focksObject
+		arg = MEMORY[argument]
+		if not arg then
+			error(string.format("Error: {} is not defined.", 2))
+		end
 	end
-	log("Running function: " .. func .. " with argument: " .. tostring(arg))
-	MEMORY[func](arg)
+	return arg
 end
 ---@param line string
 return function(line)
 	lineNum = lineNum + 1
 	log("Line " .. lineNum .. " (" .. line .. ").")
-	call_function(get_function_name(line), get_function_args(line))
+	for char in line:gmatch(".") do
+		print(char)
+	end
 end
