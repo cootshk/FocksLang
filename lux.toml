@@ -19,3 +19,6 @@ args = [ "src/main.lua" ]
 
 [build]
 type = "builtin"
+
+[source]
+url = "https://github.com/cootshk/FocksLang"

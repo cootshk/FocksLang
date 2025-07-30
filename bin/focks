@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+cd "$(realpath $(dirname $0))"
+if [[ ! "$@" == *".fock"* ]]; then
+    export FILE="$(pwd)/main.fock"
+fi
+if [[ "$(pwd)" == "/nix/store/"*"-focks-"*"/bin" ]]; then
+    echo moving $(pwd)
+    cd ../src
+    pwd
+fi
+lx --no-luarc --verbose --no-project run --no-loader --no-lock -- "$@" $FILE

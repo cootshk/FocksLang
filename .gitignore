@@ -1,2 +1,12 @@
-.direnv
+# Lua/x
 .lux
+*.rock
+*.rockspec
+# Luac
+*.luac
+*.out
+
+# Nix
+.direnv
+result
+result-*

@@ -28,6 +28,26 @@
                     ] ++ deps;
                 };
                 packages = {
+                    default = let 
+                        src = ./.;
+                      in pkgs.stdenv.mkDerivation {
+                        inherit src;
+                        pname = "focks";
+                        version = "0.1.0";
+                        nativeBuildInputs = deps;
+                        buildInputs = with pkgs; [ lux-cli ] ++ deps;
+                        installPhase = ''
+                            # Place bin/focks in $out/bin
+                            mkdir -p $out/bin
+                            cp -r . $out/src
+                            ln -s $out/src/bin/focks $out/bin/focks
+                        '';
+                        meta = with pkgs.lib; {
+                            description = "FocksLang programming language";
+                            homepage = "https://github.com/cootshk/FocksLang";
+                            license = licenses.gpl3;
+                        };
+                    };
                     lux-cli = lux.lux-cli;
                 };
             });
