@@ -34,3 +34,5 @@ end
 ```
 
 You can try the still WIP compile script by running it with `BETA_BUILD=1 bin/compile`
+
+also todo: patch the script to load the `lfs.so` object from the /lib part of the nix store

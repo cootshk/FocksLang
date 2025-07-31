@@ -45,8 +45,8 @@ end
 ---@return focksObject
 local function parse_block(argument)
 	---@type any
-	local arg = argument
-	if argument:sub(1, 1) == '"' then
+	local arg = tostring(argument)
+	if arg:sub(1, 1) == '"' then
 		local end_quote = argument:find('"', 2, true)
 		if not end_quote then
 			error("Unmatched quote!")
@@ -61,9 +61,9 @@ local function parse_block(argument)
 		else
 			arg = objects.string(argument:sub(2, end_quote - 1))
 		end
-	elseif tonumber(argument) then
+	elseif tonumber(arg) then
 		arg = objects.int(tonumber(argument))
-	elseif table.contains({ "true", "false" }, argument) then
+	elseif table.contains({ "true", "false" }, arg) then
 		arg = objects.boolean(argument == "true")
 	else
 		---@type focksObject

@@ -5,3 +5,6 @@
 
 set "foo" (concat (concat "hel" "lo") (concat " " "world"))
 print foo
+
+set "result" (sub (add 1 4) 2)
+print (concat "one plus four minus two is:\n " result)

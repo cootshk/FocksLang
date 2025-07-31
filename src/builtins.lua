@@ -3,58 +3,73 @@ local objects = require("objects")
 local old = require("globals")
 
 ---@type table, string, focksObject
-local ret = {
-	---@type focksFunction
-	print = objects.func(function(arg)
+local memory = {
+-- GENERAL
+	---@param arg focksObject
+	print = function(arg)
 		print(arg.value)
-	end),
+	end,
 	---@param arg focksString
-	---@type focksFunction
-	set = objects.func(function(arg)
+	set = function(arg)
 		if not type(arg):match("tring", 2) then
 			error("You can only use strings as variable names!")
 		end
 		---@param arg2 focksObject
-		return objects.func(function(arg2)
+		return function(arg2)
 			local old_value
 			pcall(function()
 				old_value = MEMORY[arg.value]
 			end)
 			MEMORY[arg.value] = arg2
 			return old_value
-		end)
-	end),
-	concat = objects.func(function(arg)
-		return function(arg2)
-			log("Concatinating " .. arg .. " and " .. arg2)
-			return objects.string(arg .. arg2)
 		end
-	end),
-	---@param arg focksString
+	end,
+-- STRING
+	concat = function(arg1)
+		return function(arg2)
+			return objects.string(arg1 .. arg2)
+		end
+	end,
+	---@param arg1 focksString
 	---@return function
-	contains = objects.func(function(arg)
+	contains = function(arg1)
 		---@param arg2 focksObject
 		---@return boolean
 		return function(arg2)
-			if type(arg) == "focksString" then
-				if string.find(arg.value, tostring(arg2), 1, true) then
+			if type(arg1) == "focksString" then
+				if string.find(arg1.value, tostring(arg2), 1, true) then
 					return true
 				end
 			end
 			return false
 		end
-	end),
+	end,
+-- INTEGER
+	---@param arg1 focksInt
+	add = function(arg1)
+		---@param arg2 focksInt
+		---@return integer
+		return function(arg2)
+			return arg1 + arg2
+		end
+	end,
+	---@param arg1 focksInt
+	sub = function(arg1)
+		---@param arg2 focksInt
+		---@return integer
+		return function(arg2)
+			return arg1 - arg2
+		end
+	end,
+-- LITERALS
 	-- these are also literals in lua lmao
-	---@type focksBoolean
-	["true"] = objects.boolean(true),
-	---@type focksBoolean
-	["false"] = objects.boolean(false),
-	---@type focksString
-	_VERSION = objects.string(VERSION),
-	_LUA_VERSION = objects.string(_G._VERSION),
+	["true"] = true,
+	["false"] = false,
+	_VERSION = VERSION,
+	_LUA_VERSION = _VERSION,
 }
-
-setmetatable(ret, {
+local out = {}
+setmetatable(out, {
 	---@param self table
 	---@param key str
 	__index = function(self, key)
@@ -65,6 +80,11 @@ setmetatable(ret, {
 			return self[key.value]
 		end
 	end,
+	__newindex = function (self, k, v)
+		rawset(self, k, objects.object(v))
+	end
 })
-
-return ret
+for k, v in pairs(memory) do
+	out[k] = v
+end
+return out

@@ -215,9 +215,29 @@ setmetatable(func, {
 	__call = func.new,
 })
 
+---@param value focksObject|string|integer|boolean|function
+---@return focksObject
+local function object(value)
+	if type(value) == "string" then
+		return string(value)
+	elseif type(value) == "number" then
+		return int(value)
+	elseif type(value) == "function" then
+		return func(value)
+	elseif type(value) == "boolean" then
+		return boolean(value)
+	elseif type(value):match("focks") then
+		---@type focksObject
+		return value
+	else
+		error("Invalid focks object type "..type(value))
+	end
+end
+
 return {
 	string = string,
 	int = int,
 	boolean = boolean,
 	func = func,
+	object = object
 }
