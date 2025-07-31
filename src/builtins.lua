@@ -7,7 +7,6 @@ local ret = {
 	---@type focksFunction
 	print = helpers.func(function(arg)
 		print(arg.value)
-		return arg -- daisy chained
 	end),
 	---@param arg focksString
 	---@type focksFunction
@@ -17,9 +16,30 @@ local ret = {
 		end
 		---@param arg2 focksObject
 		return helpers.func(function(arg2)
+			local old_value
+			pcall(function() old_value = MEMORY[arg.value] end)
 			MEMORY[arg.value] = arg2
-			return arg2 -- also daisy chained
+			return old_value
 		end)
+	end),
+	concat = helpers.func(function(arg)
+		return function(arg2)
+			return helpers.string(arg .. arg2)
+		end
+	end),
+	---@param arg focksString
+	---@return function
+	contains = helpers.func(function(arg)
+		---@param arg2 focksObject
+		---@return boolean
+		return function(arg2)
+			if type(arg) == "focksString" then
+				if string.find(arg.value, tostring(arg2), 1, true) then
+					return true
+				end
+			end
+			return false
+		end
 	end),
 	-- these are also literals in lua lmao
 	---@type focksBoolean
