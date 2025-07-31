@@ -18,9 +18,9 @@ setmetatable(MEMORY, {
 				return call_function(key, args)
 			end
 		elseif type(key) == "string" then
-			error("Variable '".. key .. "' is not defined!")
+			error("Variable '" .. key .. "' is not defined!")
 		else
-			error("Grabbing the memory of ".. type(key) .. " is not implemented!")
+			error("Grabbing the memory of " .. type(key) .. " is not implemented!")
 		end
 	end,
 })
@@ -33,7 +33,7 @@ local function call_function(func, arg)
 		func = helpers.func(func)
 	end
 	if type(func) ~= "focksFunction" then
-		error("Attempted to call "..type(func) .. " (" .. tostring(func) .. ") as a function.")
+		error("Attempted to call " .. type(func) .. " (" .. tostring(func) .. ") as a function.")
 	end
 	return func(arg)
 end
@@ -62,8 +62,8 @@ local function parse_block(argument)
 		end
 	elseif tonumber(argument) then
 		arg = helpers.int(tonumber(argument))
-	elseif table.contains({'true', 'false'}, argument) then
-		arg = helpers.boolean(argument == 'true')
+	elseif table.contains({ "true", "false" }, argument) then
+		arg = helpers.boolean(argument == "true")
 	else
 		---@type focksObject
 		arg = MEMORY[argument]
@@ -74,17 +74,17 @@ local function parse_block(argument)
 	return arg
 end
 local escapes = {
-	a="\a",
-	b="\b",
-	f="\f",
-	n="\n",
-	r="\r",
-	t="\t",
-	v="\v",
+	a = "\a",
+	b = "\b",
+	f = "\f",
+	n = "\n",
+	r = "\r",
+	t = "\t",
+	v = "\v",
 	-- the backslashes before these should be removed
-	["\\"]="\\",
-	["\""]="\"",
-	["'"]="'",
+	["\\"] = "\\",
+	['"'] = '"',
+	["'"] = "'",
 }
 -- functions
 local run, evaluate, parse
@@ -97,7 +97,7 @@ function parse(line, is_paren)
 		lineNum = lineNum + 1
 		log("Line " .. lineNum .. " (" .. line .. ").")
 	else
-		log("Invoked parse inside parens: ("..line..")")
+		log("Invoked parse inside parens: (" .. line .. ")")
 	end
 	local blocks = {}
 	do
@@ -120,7 +120,7 @@ function parse(line, is_paren)
 					block = block .. "\\" .. char
 				end
 				is_backslash = false
-			elseif char == "\"" then
+			elseif char == '"' then
 				is_string = not is_string
 				block = block .. char
 			elseif char == "\\" and is_string then
@@ -133,16 +133,20 @@ function parse(line, is_paren)
 					skip_paren_count = skip_paren_count - 1
 					block = ""
 					if skip_paren_count == 0 then
-						log("Total paren count: "..total_paren_count-total_end_paren_count)
-						assert(paren_expression_start, "Syntax error: end parentheses without a corresponding start parentheses on line ".. lineNum)
-						local result = run(line:sub(paren_expression_start+1, i-1), true)
+						log("Total paren count: " .. total_paren_count - total_end_paren_count)
+						assert(
+							paren_expression_start,
+							"Syntax error: end parentheses without a corresponding start parentheses on line "
+								.. lineNum
+						)
+						local result = run(line:sub(paren_expression_start + 1, i - 1), true)
 						table.insert(blocks, result)
-						log("Got result (type ".. type(result) .. "): ", result)
+						log("Got result (type " .. type(result) .. "): ", result)
 						paren_expression_start = nil
 						log("End of paren expression")
 					end
 				elseif not is_paren and total_end_paren_count > total_paren_count then
-					error("Syntax error: missing end parentheses on line "..lineNum)
+					error("Syntax error: missing end parentheses on line " .. lineNum)
 				else
 					table.insert(blocks, block)
 					break
@@ -155,7 +159,7 @@ function parse(line, is_paren)
 				end
 			elseif char == "(" then
 				total_paren_count = total_paren_count + 1
-				if total_paren_count-total_end_paren_count == 1 then
+				if total_paren_count - total_end_paren_count == 1 then
 					table.insert(blocks, block)
 					block = ""
 					paren_expression_start = i
@@ -169,17 +173,17 @@ function parse(line, is_paren)
 			end
 		end
 	end
-	log("Blocks: "..#blocks)
+	log("Blocks: " .. #blocks)
 	---@type focksObject[]
 	local statements = {}
 	for i, block in ipairs(blocks) do
 		if block == "" or not block then
 			log("TODO: fix (received empty string as a block)")
 		elseif type(block):find("focks") then
-			log("Copying "..lineNum.."."..i..": "..block.value)
+			log("Copying " .. lineNum .. "." .. i .. ": " .. block.value)
 			table.insert(statements, block)
 		else
-			log("Parsing "..lineNum.."."..i..": \'"..block.."\'")
+			log("Parsing " .. lineNum .. "." .. i .. ": '" .. block .. "'")
 			table.insert(statements, parse_block(block))
 		end
 	end
@@ -189,7 +193,7 @@ end
 ---@param statements focksObject[]
 ---@return focksObject
 function evaluate(statements)
-	log("Evaluating ".. #statements .. " statements")
+	log("Evaluating " .. #statements .. " statements")
 	local i = 0
 	if #statements == 1 then
 		return statements[1]
@@ -198,10 +202,10 @@ function evaluate(statements)
 	end
 	while #statements > 1 do
 		i = i + 1
-		log("Running statement ".. i)
+		log("Running statement " .. i)
 		-- stupid way to strip nils
 		local func
-		repeat 
+		repeat
 			func = table.remove(statements, 1)
 		until func
 		local arg

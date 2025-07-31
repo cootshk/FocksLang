@@ -17,14 +17,16 @@ local ret = {
 		---@param arg2 focksObject
 		return helpers.func(function(arg2)
 			local old_value
-			pcall(function() old_value = MEMORY[arg.value] end)
+			pcall(function()
+				old_value = MEMORY[arg.value]
+			end)
 			MEMORY[arg.value] = arg2
 			return old_value
 		end)
 	end),
 	concat = helpers.func(function(arg)
 		return function(arg2)
-			log("Concatinating "..arg.." and "..arg2)
+			log("Concatinating " .. arg .. " and " .. arg2)
 			return helpers.string(arg .. arg2)
 		end
 	end),
@@ -44,24 +46,25 @@ local ret = {
 	end),
 	-- these are also literals in lua lmao
 	---@type focksBoolean
-	['true'] = helpers.boolean(true),
+	["true"] = helpers.boolean(true),
 	---@type focksBoolean
-	['false'] = helpers.boolean(false),
+	["false"] = helpers.boolean(false),
 	---@type focksString
 	_VERSION = helpers.string(VERSION),
-	_LUA_VERSION = helpers.string(_G._VERSION)
+	_LUA_VERSION = helpers.string(_G._VERSION),
 }
 
 setmetatable(ret, {
 	---@param self table
 	---@param key str
-	__index = function (self, key)
+	__index = function(self, key)
 		--[[if type(key) == "string" then
 			error("Variable "..key.." is not defined!")
-		else]]if type("key") == "focksString" then
+		else]]
+		if type("key") == "focksString" then
 			return self[key.value]
 		end
-	end
+	end,
 })
 
 return ret

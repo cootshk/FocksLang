@@ -212,7 +212,7 @@ local func = {
 	type = "focksFunction",
 }
 setmetatable(func, {
-	__call = func.new
+	__call = func.new,
 })
 
 --- Gets the character at the index of a string
