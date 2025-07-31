@@ -27,25 +27,42 @@
                         git
                     ] ++ deps;
                 };
-                packages = {
-                    default = let 
+                packages = let
+                    version = "0.2.0";
+                    meta = with pkgs.lib; {
+                        description = "FocksLang programming language";
+                        homepage = "https://github.com/cootshk/FocksLang";
+                        license = licenses.gpl3;
+                    };
+                  in {
+                    default = let
+                        src = ./.;
+                      in pkgs.stdenv.mkDerivation {
+                        pname = "focks";
+                        inherit version src meta;
+                        nativeBuildInputs = deps;
+                        buildInputs = with pkgs; [ lux-cli bash ];
+                        buildPhase = ''
+                            bash bin/compile
+                        '';
+                        installPhase = ''
+                            mkdir -p $out/bin
+                            cp src/main $out/bin/focks
+                        '';
+                    };
+                    old = let 
                         src = ./.;
                       in pkgs.stdenv.mkDerivation {
                         inherit src;
                         pname = "focks";
-                        version = "0.2.0";
+                        inherit version meta;
                         nativeBuildInputs = deps;
-                        buildInputs = with pkgs; [ lux-cli ] ++ deps;
+                        buildInputs = with pkgs; [ lux-cli bash ] ++ deps;
                         installPhase = ''
                             mkdir -p $out
                             cp -r . $out
                             # Bin script is already in /bin/focks
                         '';
-                        meta = with pkgs.lib; {
-                            description = "FocksLang programming language";
-                            homepage = "https://github.com/cootshk/FocksLang";
-                            license = licenses.gpl3;
-                        };
                     };
                     lux-cli = lux.lux-cli;
                 };
