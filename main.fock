@@ -1,4 +1,1 @@
-print \
-# this is a comment part 2
-        false
-set "a" "b"
+print "hello world"

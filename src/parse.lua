@@ -4,11 +4,11 @@ local helpers = require("helpers")
 _G.MEMORY = require("builtins")
 setmetatable(MEMORY, {
 	__index = function(self, key)
-		if helpers.type(key) == "focksString" then
+		if type(key) == "focksString" then
 			return function(index)
 				return helpers.get(key, index)
 			end
-		elseif helpers.type(key) == "function" then
+		elseif type(key) == "function" then
 			log("key is", key)
 			return function(args)
 				log("args are", args)
@@ -16,10 +16,20 @@ setmetatable(MEMORY, {
 				return call_function(key, args)
 			end
 		else
-			error("not implemented")
+			error("Grabbing the memory of ".. type(key) .. " is not implemented!")
 		end
 	end,
 })
+---Calls `func` with `arg`
+---@param func focksFunction
+---@param arg focksObject
+---@return focksObject
+local function call_function(func, arg)
+	if type(func) ~= "focksFunction" then
+		error("Attempted to call "..type(arg) .. " as a function.")
+	end
+	return func(arg)
+end
 
 -- A line contains multiple blocks, which can be variables, function definitions, or literals (true, "asdf", 1, etc)
 ---Gets the fock object corresponding to the parsed word
@@ -56,11 +66,62 @@ local function parse_block(argument)
 	end
 	return arg
 end
+local escapes = {
+	a="\a",
+	b="\b",
+	f="\f",
+	n="\n",
+	r="\r",
+	t="\t",
+	v="\v",
+	-- the backslashes before these should be removed
+	["\\"]="\\",
+	["\""]="\"",
+	["'"]="'",
+}
 ---@param line string
 return function(line)
 	lineNum = lineNum + 1
 	log("Line " .. lineNum .. " (" .. line .. ").")
-	for char in line:gmatch(".") do
-		print(char)
+	local blocks = {}
+	do
+		local block = ""
+		local is_string = false
+		local is_backslash = false
+		for char in (line .. " "):gmatch(".") do
+			if is_backslash then
+				local esc = escapes[char]
+				if esc then
+					block = block .. esc
+				else
+					block = block .. "\\" .. char
+				end
+				is_backslash = false
+			elseif char == " " and not is_string then
+				table.insert(blocks, block)
+				block = ""
+			elseif char == "\\" and is_string then
+				is_backslash = true
+			elseif char == "\"" then
+				is_string = not is_string
+				block = block .. char
+			else
+				block = block .. char
+			end
+		end
 	end
+	if #blocks == 1 then
+		table.insert(blocks, 0, "print")
+	end
+	log("Blocks: "..#blocks)
+	local statements = {}
+	for i, block in ipairs(blocks) do
+		log("Parsing "..lineNum.."."..i..": "..block)
+		table.insert(statements, parse_block(block))
+	end
+	repeat
+		local func = table.remove(statements, 1)
+		local arg = table.remove(statements, 1)
+		table.insert(statements, 1, call_function(func, arg))
+	until #statements <= 1
 end

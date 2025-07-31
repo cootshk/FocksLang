@@ -27,6 +27,7 @@ local ret = {
 	['false'] = helpers.boolean(false),
 	---@type focksString
 	_VERSION = helpers.string(VERSION),
+	_LUA_VERSION = helpers.string(_G._VERSION)
 }
 
 setmetatable(ret, {
