@@ -9,19 +9,17 @@ local string = {
 		---@class focksString
 		local ret = copy(self)
 		ret.value = value
-		local metatable = {
-			__call = function(self, value)
-				local type = type(value)
-				if type == "number" then
-					return self:call(value)
-				elseif type == "string" or type == "focksString" then
-					return self .. value
-				else
-					error("Invalid type for string call: " .. type)
-				end
-			end,
-		}
-		setmetatable(metatable, getmetatable(self))
+		local metatable = copy(getmetatable(self))
+		metatable.__call = function(self, value)
+			local type = type(value)
+			if type == "number" then
+				return self:call(value)
+			elseif type == "string" or type == "focksString" then
+				return self .. value
+			else
+				error("Invalid type for string call: " .. type)
+			end
+		end
 		setmetatable(ret, metatable)
 		return ret
 	end,
@@ -91,11 +89,10 @@ local int = {
 		---@class focksInt
 		local ret = copy(self)
 		ret.value = value
-		local metatable = {
-			__call = function(...)
-				error("You cannot call an integer!", 2)
-			end,
-		}
+		local metatable = copy(getmetatable(ret))
+		metatable.__call = function(...)
+			error("You cannot call an integer!", 2)
+		end
 		setmetatable(metatable, getmetatable(ret))
 		setmetatable(ret, metatable)
 		return ret
@@ -199,11 +196,10 @@ local func = {
 		---@class focksFunction
 		local ret = copy(self)
 		ret.value = value
-		local metatable = {
-			__call = function(self, ...)
-				return self.value(...)
-			end
-		}
+		local metatable = copy(getmetatable(ret))
+		metatable.__call = function(self, ...)
+			return self.value(...)
+		end
 		setmetatable(metatable, getmetatable(ret))
 		setmetatable(ret, metatable)
 		return ret

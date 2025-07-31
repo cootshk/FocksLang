@@ -2,6 +2,8 @@ local lineNum = 0
 ---@type table, string, function
 local helpers = require("helpers")
 _G.MEMORY = require("builtins")
+local old_globals = require("globals")
+
 setmetatable(MEMORY, {
 	__index = function(self, key)
 		if type(key) == "focksString" then
@@ -23,12 +25,15 @@ setmetatable(MEMORY, {
 	end,
 })
 ---Calls `func` with `arg`
----@param func focksFunction
+---@param func focksFunction|function
 ---@param arg focksObject
 ---@return focksObject
 local function call_function(func, arg)
+	if type(func) == "function" then
+		func = helpers.func(func)
+	end
 	if type(func) ~= "focksFunction" then
-		error("Attempted to call "..type(arg) .. " as a function.")
+		error("Attempted to call "..type(func) .. " (" .. tostring(func) .. ") as a function.")
 	end
 	return func(arg)
 end
@@ -81,16 +86,27 @@ local escapes = {
 	["\""]="\"",
 	["'"]="'",
 }
+-- functions
+local run, evaluate, parse
+---Parses a line (string) and returns a list of focksObjects to be run
 ---@param line string
-return function(line)
-	lineNum = lineNum + 1
+---@param is_paren boolean?
+---@return focksObject[]
+function parse(line, is_paren)
+	if not is_paren then
+		lineNum = lineNum + 1
+	else log("Invoked parse inside parens: ("..line..")")
+	end
 	log("Line " .. lineNum .. " (" .. line .. ").")
 	local blocks = {}
 	do
 		local block = ""
 		local is_string = false
 		local is_backslash = false
+		local skip_paren_count = 0
+		local i = 0
 		for char in (line .. " "):gmatch(".") do
+			i = i + 1
 			if is_backslash then
 				local esc = escapes[char]
 				if esc then
@@ -99,31 +115,76 @@ return function(line)
 					block = block .. "\\" .. char
 				end
 				is_backslash = false
-			elseif char == " " and not is_string then
-				table.insert(blocks, block)
-				block = ""
-			elseif char == "\\" and is_string then
-				is_backslash = true
 			elseif char == "\"" then
 				is_string = not is_string
 				block = block .. char
+			elseif char == "\\" and is_string then
+				is_backslash = true
+			elseif is_string then
+				block = block .. char
+			elseif char == ")" then
+				if skip_paren_count > 0 then
+					skip_paren_count = skip_paren_count - 1
+					block = ""
+					log("End of paren expression")
+				elseif not is_paren then
+					error("Syntax error: missing parentheses on line "..lineNum)
+				else
+					table.insert(blocks, block)
+					break
+				end
+			elseif skip_paren_count > 0 then -- we skip all of the other characters
+			elseif char == "(" then
+				table.insert(blocks, block)
+				block = ""
+				local result = run(line:sub(i+1), true)
+				table.insert(blocks, result)
+				log("Got result (type ".. type(result) .. "): ", result)
+				skip_paren_count = skip_paren_count + 1
+			elseif char == " " then
+				table.insert(blocks, block)
+				block = ""
 			else
 				block = block .. char
 			end
 		end
 	end
-	if #blocks == 1 then
-		table.insert(blocks, 0, "print")
-	end
 	log("Blocks: "..#blocks)
+	---@type focksObject[]
 	local statements = {}
 	for i, block in ipairs(blocks) do
-		log("Parsing "..lineNum.."."..i..": "..block)
-		table.insert(statements, parse_block(block))
+		if block == "" then
+			log("TODO: fix (received empty string as a block)")
+		elseif type(block):find("focks") then
+			log("Copying "..lineNum.."."..i..": "..block.value)
+			table.insert(statements, block)
+		else
+			log("Parsing "..lineNum.."."..i..": \""..block.."\"")
+			table.insert(statements, parse_block(block))
+		end
 	end
-	repeat
+	return statements
+end
+---Evaluates a list of focksObjects and returns the result
+---@param statements focksObject[]
+---@return focksObject
+function evaluate(statements)
+	log("Evaluating ".. #statements .. " statements")
+	local i = 0
+	while #statements > 1 do
+		i = i + 1
+		log("Running statement ".. i)
 		local func = table.remove(statements, 1)
 		local arg = table.remove(statements, 1)
 		table.insert(statements, 1, call_function(func, arg))
-	until #statements <= 1
+	end
+	return statements[1]
 end
+---Runs a line of code
+---@param line string
+---@param is_paren boolean?
+function run(line, is_paren)
+	local statements = parse(line, is_paren)
+	return evaluate(statements)
+end
+return run

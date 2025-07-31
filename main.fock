@@ -1,2 +1,2 @@
-set "a" "hello world"
-print a
+set "foo" (concat "hello " "world")
+print foo

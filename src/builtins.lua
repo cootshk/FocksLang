@@ -24,6 +24,7 @@ local ret = {
 	end),
 	concat = helpers.func(function(arg)
 		return function(arg2)
+			log("Concatinating "..arg.." and "..arg2)
 			return helpers.string(arg .. arg2)
 		end
 	end),

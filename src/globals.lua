@@ -1,5 +1,9 @@
 ---@diagnostic disable: duplicate-set-field
 
+-- old funcs
+local type_old = _G.type
+local tonumber_old = _G.tonumber
+
 -- Waiting on real lux compiling (luastatic?) support
 ---@type function
 local write
@@ -25,14 +29,13 @@ _G.log = function(...)
 	end
 	local args = { ... }
 	for i, v in ipairs(args) do
-		if type(v) == "table" then
+		if type_old(v) == "table" then
 			args[i] = write(v)
 		end
 	end
 	print(table.concat(args, " "))
 end
 
-local tonumber_old = _G.tonumber
 ---@param e num
 ---@param base int
 ---@return number
@@ -46,7 +49,6 @@ _G.tonumber = function(e, base)
 	return tonumber_old(e, base)
 end
 
-local type_old = _G.type
 ---Returns the type of an object. Focks objects have a type starting with "focks"
 ---@param object any
 ---@return luaObjectTypes|focksObjectTypes
