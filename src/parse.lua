@@ -95,9 +95,10 @@ local run, evaluate, parse
 function parse(line, is_paren)
 	if not is_paren then
 		lineNum = lineNum + 1
-	else log("Invoked parse inside parens: ("..line..")")
+		log("Line " .. lineNum .. " (" .. line .. ").")
+	else
+		log("Invoked parse inside parens: ("..line..")")
 	end
-	log("Line " .. lineNum .. " (" .. line .. ").")
 	local blocks = {}
 	do
 		local block = ""
@@ -106,6 +107,8 @@ function parse(line, is_paren)
 		local total_paren_count = 0
 		local total_end_paren_count = 0
 		local skip_paren_count = 0
+		---@type integer?
+		local paren_expression_start = nil
 		local i = 0
 		for char in (line .. " "):gmatch(".") do
 			i = i + 1
@@ -129,7 +132,15 @@ function parse(line, is_paren)
 				if skip_paren_count > 0 then
 					skip_paren_count = skip_paren_count - 1
 					block = ""
-					log("End of paren expression")
+					if skip_paren_count == 0 then
+						log("Total paren count: "..total_paren_count-total_end_paren_count)
+						assert(paren_expression_start, "Syntax error: end parentheses without a corresponding start parentheses on line ".. lineNum)
+						local result = run(line:sub(paren_expression_start+1, i-1), true)
+						table.insert(blocks, result)
+						log("Got result (type ".. type(result) .. "): ", result)
+						paren_expression_start = nil
+						log("End of paren expression")
+					end
 				elseif not is_paren and total_end_paren_count > total_paren_count then
 					error("Syntax error: missing end parentheses on line "..lineNum)
 				else
@@ -140,14 +151,15 @@ function parse(line, is_paren)
 				if char == "(" then
 					-- increse the counter here so we don't error
 					total_paren_count = total_paren_count + 1
+					skip_paren_count = skip_paren_count + 1
 				end
 			elseif char == "(" then
 				total_paren_count = total_paren_count + 1
-				table.insert(blocks, block)
-				block = ""
-				local result = run(line:sub(i+1), true)
-				table.insert(blocks, result)
-				log("Got result (type ".. type(result) .. "): ", result)
+				if total_paren_count-total_end_paren_count == 1 then
+					table.insert(blocks, block)
+					block = ""
+					paren_expression_start = i
+				end
 				skip_paren_count = skip_paren_count + 1
 			elseif char == " " then
 				table.insert(blocks, block)
@@ -167,7 +179,7 @@ function parse(line, is_paren)
 			log("Copying "..lineNum.."."..i..": "..block.value)
 			table.insert(statements, block)
 		else
-			log("Parsing "..lineNum.."."..i..": \""..block.."\"")
+			log("Parsing "..lineNum.."."..i..": \'"..block.."\'")
 			table.insert(statements, parse_block(block))
 		end
 	end
