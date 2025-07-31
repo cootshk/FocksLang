@@ -69,7 +69,7 @@ local function parse_block(argument)
 		---@type focksObject
 		arg = MEMORY[argument]
 		if not arg then
-			error(string.format("Error: {} is not defined.", 2))
+			error("Error: ".. argument .. " is not defined!", 2)
 		end
 	end
 	return arg
@@ -111,6 +111,7 @@ function parse(line, is_paren)
 		---@type integer?
 		local paren_expression_start = nil
 		local i = 0
+		-- TODO: use a regex match of /([a-zA-Z0-9_.-]+)|./ to match words
 		for char in (line .. " "):gmatch(".") do
 			i = i + 1
 			if is_backslash then

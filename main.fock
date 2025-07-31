@@ -16,3 +16,5 @@ print("oh yeah this works btw")
 print "also this"
 "you can also do this"
 concat "but it won't " "print anything"
+set "in" (read "> ")
+print(concat "You wrote: " in)
