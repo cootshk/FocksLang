@@ -1,2 +1,7 @@
+# typically, functions get run from left to right
+# a b c is the same as a(b)(c) or (a(b))(c)
+
+# function documentation coming soon:tm:
+
 set "foo" (concat (concat "hel" "lo") (concat " " "world"))
 print foo
