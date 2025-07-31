@@ -1,6 +1,11 @@
 {
-    "workspace.library": [
-        ".lux"
-    ],
-    "diagnostics.libraryFiles": "Disable"
+  "diagnostics.libraryFiles": "Disable",
+  "workspace": {
+    "library": [
+      ".lux/jit/3a2a891f3138ae19a28b6ceb2e65b7d0c8e8d46674296468a1556bc60676905a-penlight@1.14.0-3",
+      ".lux/jit/832fd9862ce671c0c9777855d4c8b19f9ad9c2679fb5466c3a183785a51b76b0-luafilesystem@1.8.0-1",
+      ".lux/jit/b5391c77572d8186079e80fb4d8582cf0fea6dcc64b08af3cc651d3eed8e8b35-luastatic@0.0.12-1",
+      ".lux/jit/d528cd52981564259b873ae3f972f48a19522d775240465725a6434109336b92-argparse@0.7.1-1"
+    ]
+  }
 }

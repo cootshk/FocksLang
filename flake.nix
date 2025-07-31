@@ -33,14 +33,13 @@
                       in pkgs.stdenv.mkDerivation {
                         inherit src;
                         pname = "focks";
-                        version = "0.1.0";
+                        version = "0.2.0";
                         nativeBuildInputs = deps;
                         buildInputs = with pkgs; [ lux-cli ] ++ deps;
                         installPhase = ''
-                            # Place bin/focks in $out/bin
-                            mkdir -p $out/bin
-                            cp -r . $out/src
-                            ln -s $out/src/bin/focks $out/bin/focks
+                            mkdir -p $out
+                            cp -r . $out
+                            # Bin script is already in /bin/focks
                         '';
                         meta = with pkgs.lib; {
                             description = "FocksLang programming language";
