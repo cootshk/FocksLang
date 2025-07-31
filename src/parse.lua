@@ -128,6 +128,10 @@ function parse(line, is_paren)
 				is_backslash = true
 			elseif is_string then
 				block = block .. char
+			elseif char == "#" then
+				-- comment, just break out of the line
+				table.insert(blocks, block)
+				break
 			elseif char == ")" then
 				total_end_paren_count = total_end_paren_count + 1
 				if skip_paren_count > 0 then
