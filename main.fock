@@ -1,2 +1,2 @@
-set "foo" (concat "hello " "world")
+set "foo" (concat (concat "hel" "lo") (concat " " "world"))
 print foo

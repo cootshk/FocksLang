@@ -103,6 +103,8 @@ function parse(line, is_paren)
 		local block = ""
 		local is_string = false
 		local is_backslash = false
+		local total_paren_count = 0
+		local total_end_paren_count = 0
 		local skip_paren_count = 0
 		local i = 0
 		for char in (line .. " "):gmatch(".") do
@@ -123,18 +125,24 @@ function parse(line, is_paren)
 			elseif is_string then
 				block = block .. char
 			elseif char == ")" then
+				total_end_paren_count = total_end_paren_count + 1
 				if skip_paren_count > 0 then
 					skip_paren_count = skip_paren_count - 1
 					block = ""
 					log("End of paren expression")
-				elseif not is_paren then
-					error("Syntax error: missing parentheses on line "..lineNum)
+				elseif not is_paren and total_end_paren_count > total_paren_count then
+					error("Syntax error: missing end parentheses on line "..lineNum)
 				else
 					table.insert(blocks, block)
 					break
 				end
 			elseif skip_paren_count > 0 then -- we skip all of the other characters
+				if char == "(" then
+					-- increse the counter here so we don't error
+					total_paren_count = total_paren_count + 1
+				end
 			elseif char == "(" then
+				total_paren_count = total_paren_count + 1
 				table.insert(blocks, block)
 				block = ""
 				local result = run(line:sub(i+1), true)
@@ -153,7 +161,7 @@ function parse(line, is_paren)
 	---@type focksObject[]
 	local statements = {}
 	for i, block in ipairs(blocks) do
-		if block == "" then
+		if block == "" or not block then
 			log("TODO: fix (received empty string as a block)")
 		elseif type(block):find("focks") then
 			log("Copying "..lineNum.."."..i..": "..block.value)
@@ -171,11 +179,26 @@ end
 function evaluate(statements)
 	log("Evaluating ".. #statements .. " statements")
 	local i = 0
+	if #statements == 1 then
+		return statements[1]
+	elseif #statements == 0 then
+		error("No statements?\nThis is an internal bug in Focks and should never be encountered.")
+	end
 	while #statements > 1 do
 		i = i + 1
 		log("Running statement ".. i)
-		local func = table.remove(statements, 1)
-		local arg = table.remove(statements, 1)
+		-- stupid way to strip nils
+		local func
+		repeat 
+			func = table.remove(statements, 1)
+		until func
+		local arg
+		repeat
+			if #statements == 0 then
+				return func
+			end
+			arg = table.remove(statements, 1)
+		until arg
 		table.insert(statements, 1, call_function(func, arg))
 	end
 	return statements[1]
