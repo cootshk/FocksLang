@@ -15,10 +15,11 @@ local ret = {
 		if not type(arg):match("tring", 2) then
 			error("You can only use strings as variable names!")
 		end
-		return function(arg2)
-			MEMORY[arg] = arg2
+		---@param arg2 focksObject
+		return helpers.func(function(arg2)
+			MEMORY[arg.value] = arg2
 			return arg2 -- also daisy chained
-		end
+		end)
 	end),
 	-- these are also literals in lua lmao
 	---@type focksBoolean

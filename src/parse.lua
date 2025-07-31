@@ -15,6 +15,8 @@ setmetatable(MEMORY, {
 				---@diagnostic disable-next-line: undefined-global
 				return call_function(key, args)
 			end
+		elseif type(key) == "string" then
+			error("Variable '".. key .. "' is not defined!")
 		else
 			error("Grabbing the memory of ".. type(key) .. " is not implemented!")
 		end

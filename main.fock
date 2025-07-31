@@ -1,1 +1,2 @@
-print "hello world"
+set "a" "hello world"
+print a
