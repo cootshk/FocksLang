@@ -1,7 +1,6 @@
 require("globals")
 
 local argparse = require("argparse")
-local helpers = require("helpers")
 local parse = require("parse")
 
 local parser = argparse("focks", "A simple programming language interpreter.")

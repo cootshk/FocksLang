@@ -73,6 +73,18 @@ function table.contains(list, value)
 	return false
 end
 
+--- Gets the character at the index of a string
+---@param value str
+---@param index integer
+---@return string
+_G.get = function(value, index)
+	if type(value) == "string" then
+		return value:sub(index, index)
+	end
+	return value.value.sub(index, index)
+end
+_G.string.get = get
+
 return {
 	tonumber = tonumber_old,
 	type = type_old,

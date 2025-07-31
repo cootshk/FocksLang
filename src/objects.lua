@@ -215,22 +215,9 @@ setmetatable(func, {
 	__call = func.new,
 })
 
---- Gets the character at the index of a string
----@param value str
----@param index integer
----@return string
-local get = function(value, index)
-	if type(value) == "string" then
-		return value:sub(index, index)
-	end
-	return value.value.sub(index, index)
-end
-_G.string.get = get
-
 return {
 	string = string,
 	int = int,
 	boolean = boolean,
 	func = func,
-	get = get,
 }

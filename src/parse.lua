@@ -1,14 +1,15 @@
 local lineNum = 0
 ---@type table, string, function
-local helpers = require("helpers")
+local objects = require("objects")
 _G.MEMORY = require("builtins")
-local old_globals = require("globals")
+require("globals")
 
 setmetatable(MEMORY, {
 	__index = function(self, key)
+		--- TODO: remove focksString and function?
 		if type(key) == "focksString" then
 			return function(index)
-				return helpers.get(key, index)
+				return get(key, index)
 			end
 		elseif type(key) == "function" then
 			log("key is", key)
@@ -30,7 +31,7 @@ setmetatable(MEMORY, {
 ---@return focksObject
 local function call_function(func, arg)
 	if type(func) == "function" then
-		func = helpers.func(func)
+		func = objects.func(func)
 	end
 	if type(func) ~= "focksFunction" then
 		error("Attempted to call " .. type(func) .. " (" .. tostring(func) .. ") as a function.")
@@ -55,15 +56,15 @@ local function parse_block(argument)
 		if #argument > end_quote + 1 then
 			-- we doing a substring boisss
 			local index = tonumber(argument:sub(end_quote + 2))
-			arg = helpers.string(helpers.get(argument, index + 1))
+			arg = objects.string(get(argument, index + 1))
 			-- log("Substringed arg: " .. arg .. " at pos " .. index)
 		else
-			arg = helpers.string(argument:sub(2, end_quote - 1))
+			arg = objects.string(argument:sub(2, end_quote - 1))
 		end
 	elseif tonumber(argument) then
-		arg = helpers.int(tonumber(argument))
+		arg = objects.int(tonumber(argument))
 	elseif table.contains({ "true", "false" }, argument) then
-		arg = helpers.boolean(argument == "true")
+		arg = objects.boolean(argument == "true")
 	else
 		---@type focksObject
 		arg = MEMORY[argument]
