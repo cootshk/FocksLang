@@ -16,5 +16,11 @@ print("oh yeah this works btw")
 print "also this"
 "you can also do this"
 concat "but it won't " "print anything"
-set "in" (read "> ")
-print(concat "You wrote: " in)
+write "> "
+set "in" (read ansi.green)
+write (concat ansi.default "You wrote: ")
+write (concat ansi.blue in)
+print ansi.default
+
+print(concat "Random number between 1 and 3 is: " (concat ansi.red (random.int 1 3)))
+write ansi.default

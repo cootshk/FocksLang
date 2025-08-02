@@ -19,7 +19,7 @@ setmetatable(MEMORY, {
 				return call_function(key, args)
 			end
 		elseif type(key) == "string" then
-			error("Variable '" .. key .. "' is not defined!")
+			error("Variable '" .. key .. "' is not defined! (Line " .. lineNum .. ")")
 		else
 			error("Grabbing the memory of " .. type(key) .. " is not implemented!")
 		end
@@ -146,7 +146,7 @@ function parse(line, is_paren)
 								.. lineNum
 						)
 						local result = run(line:sub(paren_expression_start + 1, i - 1), true)
-						table.insert(blocks, result)
+						table.insert(blocks, objects.object(result))
 						log("Got result (type " .. type(result) .. "): ", result)
 						paren_expression_start = nil
 						log("End of paren expression")
