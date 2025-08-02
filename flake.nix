@@ -43,7 +43,7 @@
                         nativeBuildInputs = deps;
                         buildInputs = with pkgs; [ lux-cli bash ];
                         buildPhase = ''
-                            bash bin/compile
+                            BETA_BUILD=1 bash bin/compile
                         '';
                         installPhase = ''
                             mkdir -p $out/bin
@@ -57,6 +57,8 @@
                         pname = "focks";
                         inherit version meta;
                         nativeBuildInputs = deps;
+                        # TODO: when I fix this hash it should allow online builds
+                        sha256 = "sha256-RY+jShWlg6xpnT9+o5mnP3VRN5IEP/S7o3RZfrC2MSE=";
                         buildInputs = with pkgs; [ lux-cli bash ] ++ deps;
                         installPhase = ''
                             mkdir -p $out

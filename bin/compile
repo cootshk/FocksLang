@@ -6,7 +6,7 @@ export LUASTATIC="luastatic"
 
 cd "$(realpath $(dirname $0))/.."
 
-lx build
+lx build || exit 1
 if [[ ! -z "$BETA_BUILD" ]]; then
   LUASTATIC="luastatic_patched"
   cp .lux/$LUX_LUA/bin/unwrapped/luastatic .lux/$LUX_LUA/bin/unwrapped/luastatic_patched 
